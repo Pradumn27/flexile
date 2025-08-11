@@ -14,52 +14,54 @@ import { createClient } from "./shared";
 
 export const trpc = createTRPCReact<AppRouter>();
 
-export const UserDataProvider = ({ children }: { children: React.ReactNode }) => {
-  const { data: session, status } = useSession();
-  const { login, logout } = useUserStore();
+// export const UserDataProvider = ({ children }: { children: React.ReactNode }) => {
+//   const { data: session, status } = useSession();
+//   const { login, logout } = useUserStore();
 
-  const isSignedIn = !!session?.user;
-  const userId = session?.user.email;
+//   const isSignedIn = !!session?.user;
+//   const userId = session?.user.email;
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["currentUser", userId],
-    queryFn: isSignedIn
-      ? async (): Promise<unknown> => {
-          const response = await request({
-            url: internal_current_user_data_path(),
-            method: "GET",
-            accept: "json",
-            assertOk: true,
-          });
-          return await response.json();
-        }
-      : skipToken,
-  });
+//   const { data, isLoading } = useQuery({
+//     queryKey: ["currentUser", userId],
+//     queryFn: isSignedIn
+//       ? async (): Promise<unknown> => {
+//           const response = await request({
+//             url: internal_current_user_data_path(),
+//             method: "GET",
+//             accept: "json",
+//             assertOk: true,
+//           });
+//           return await response.json();
+//         }
+//       : skipToken,
+//   });
 
-  useEffect(() => {
-    if (isSignedIn && data) {
-      login(data);
-    } else if (!isSignedIn) {
-      logout();
-    }
-    // Don't call logout() while loading (when isSignedIn=true but data=undefined)
-  }, [isSignedIn, data, login, logout]);
+//   useEffect(() => {
+//     if (isSignedIn && data) {
+//       login(data);
+//     } else if (!isSignedIn) {
+//       logout();
+//     }
+//     // Don't call logout() while loading (when isSignedIn=true but data=undefined)
+//   }, [isSignedIn, data, login, logout]);
 
-  // Wait for session to load first
-  if (status === "loading") return null;
+//   // Wait for session to load first
+//   if (status === "loading") return null;
 
-  // Wait for query to complete before rendering children
-  if (isSignedIn && (isLoading || !data)) return null;
-  return children;
-};
+//   // Wait for query to complete before rendering children
+//   if (isSignedIn && (isLoading || !data)) return null;
+//   return children;
+// };
 
 let queryClient: QueryClient | undefined;
+
 function getQueryClient() {
   if (typeof window === "undefined") {
     return createClient();
   }
   return (queryClient ??= createClient());
 }
+
 function getUrl() {
   const base = (() => {
     if (typeof window !== "undefined") return "";
@@ -68,6 +70,7 @@ function getUrl() {
   })();
   return `${base}/trpc`;
 }
+
 export function TRPCProvider({ children }: Readonly<{ children: React.ReactNode }>) {
   const queryClient = getQueryClient();
   const [trpcClient] = useState(() =>
@@ -78,7 +81,9 @@ export function TRPCProvider({ children }: Readonly<{ children: React.ReactNode 
   return (
     <trpc.Provider client={trpcClient} queryClient={queryClient}>
       <QueryClientProvider client={queryClient}>
-        <SessionProvider>{children}</SessionProvider>
+        {/* <SessionProvider> */}
+        {children}
+        {/* </SessionProvider> */}
       </QueryClientProvider>
     </trpc.Provider>
   );

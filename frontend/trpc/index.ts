@@ -25,7 +25,7 @@ import { richTextExtensions } from "@/utils/richText";
 import { latestUserComplianceInfo, withRoles } from "./routes/users/helpers";
 import { type AppRouter } from "./server";
 
-export const createContext = cache(async ({ req }: FetchCreateContextFnOptions) => {
+export const createContext = cache(({ req }: FetchCreateContextFnOptions) => {
   const host = assertDefined(req.headers.get("Host"));
   const cookie = req.headers.get("cookie") ?? "";
   const userAgent = req.headers.get("user-agent") ?? "";
@@ -41,23 +41,23 @@ export const createContext = cache(async ({ req }: FetchCreateContextFnOptions) 
     ...(csrfToken ? { "x-csrf-token": csrfToken } : {}),
   };
 
-  let userId: number | null = null;
+  const userId: number | null = null;
 
   // Get userId from NextAuth JWT session
-  const session = await getServerSession(authOptions);
-  if (session?.user) {
-    // Extract user ID from JWT token
-    try {
-      const jwt = session.user.jwt;
-      const base64Payload = jwt.split(".")[1];
-      if (base64Payload) {
-        const payload = z
-          .object({ user_id: z.number() })
-          .safeParse(JSON.parse(Buffer.from(base64Payload, "base64").toString()));
-        if (payload.success) userId = payload.data.user_id;
-      }
-    } catch {}
-  }
+  // const session = await getServerSession(authOptions);
+  // if (session?.user) {
+  //   // Extract user ID from JWT token
+  //   try {
+  //     const jwt = session.user.jwt;
+  //     const base64Payload = jwt.split(".")[1];
+  //     if (base64Payload) {
+  //       const payload = z
+  //         .object({ user_id: z.number() })
+  //         .safeParse(JSON.parse(Buffer.from(base64Payload, "base64").toString()));
+  //       if (payload.success) userId = payload.data.user_id;
+  //     }
+  //   } catch {}
+  // }
 
   return {
     userId,

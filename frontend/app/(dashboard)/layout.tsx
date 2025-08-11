@@ -23,7 +23,7 @@ import type { Route } from "next";
 import Image from "next/image";
 import Link, { type LinkProps } from "next/link";
 import { usePathname, useRouter } from "next/navigation";
-import { signOut } from "next-auth/react";
+// import { signOut } from "next-auth/react";
 import React from "react";
 import { navLinks as equityNavLinks } from "@/app/(dashboard)/equity";
 import { useIsActionable } from "@/app/(dashboard)/invoices";
@@ -229,7 +229,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
               </NavItem>
               <SidebarMenuItem>
                 <SidebarMenuButton
-                  onClick={() => void signOut({ redirect: false }).then(logout)}
+                  // onClick={() => void signOut({ redirect: false }).then(logout)}
                   className="cursor-pointer"
                 >
                   <LogOut className="size-6" />

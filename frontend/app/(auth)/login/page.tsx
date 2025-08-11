@@ -1,6 +1,8 @@
 "use client";
 import Link from "next/link";
 import { linkClasses } from "@/components/Link";
+import { Button } from "@/components/ui/button";
+import { signInWithGoogle } from "@/lib/auth-client";
 import { AuthPage } from "..";
 
 export default function LoginPage() {
@@ -15,6 +17,10 @@ export default function LoginPage() {
           <Link href="/signup" className={linkClasses}>
             Sign up
           </Link>
+          <div className="mt-4" />
+          <Button variant="outline" onClick={signInWithGoogle}>
+            Continue with Google
+          </Button>
         </>
       }
       sendOtpUrl="/internal/email_otp"

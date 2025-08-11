@@ -40,9 +40,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
       <body className={`${abcWhyte.className} h-screen antialiased accent-blue-600`}>
         <TRPCProvider>
-          <UserDataProvider>
-            <NuqsAdapter>{children}</NuqsAdapter>
-          </UserDataProvider>
+          {/* <UserDataProvider> */}
+          <NuqsAdapter>{children}</NuqsAdapter>
+          {/* </UserDataProvider> */}
         </TRPCProvider>
       </body>
     </html>

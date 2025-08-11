@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
-import { getServerSession } from "next-auth";
 import env from "@/env";
-import { authOptions } from "@/lib/auth";
+import { auth } from "@/lib/betterAuth";
 
 async function handler(req: Request) {
   const routes = ["^/internal/", "^/api/", "^/admin/", "^/admin$", "^/webhooks/", "^/v1/", "^/rails/", "^/assets/"];
@@ -21,11 +20,21 @@ async function handler(req: Request) {
       url.protocol = "http";
   }
 
-  const session = await getServerSession(authOptions);
+  // Check for Better Auth session
+  let session;
+  try {
+    session = await auth.api.getSession({ headers: req.headers });
+  } catch {
+    // No session found, continue without auth header
+  }
 
   const headers = new Headers(req.headers);
 
-  if (session?.user) headers.set("x-flexile-auth", `Bearer ${session.user.jwt}`);
+  // If we have a session, add the user ID to the auth header
+  // The Rails backend will need to handle this differently since we don't have JWT tokens
+  if (session?.user.id) {
+    headers.set("x-flexile-user-id", session.user.id);
+  }
 
   if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/v1/")) {
     url.searchParams.set("token", env.API_SECRET_TOKEN);

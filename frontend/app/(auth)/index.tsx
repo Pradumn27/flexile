@@ -3,7 +3,7 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-import { getSession, signIn } from "next-auth/react";
+// import { getSession, signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { MutationStatusButton } from "@/components/MutationButton";
@@ -60,13 +60,13 @@ export function AuthPage({
       const email = emailForm.getValues("email");
       await onVerifyOtp?.({ email, otp: values.otp });
 
-      const result = await signIn("otp", { email, otp: values.otp, redirect: false });
+      // const result = await signIn("otp", { email, otp: values.otp, redirect: false });
 
-      if (result?.error) throw new Error("Invalid verification code");
+      // if (result?.error) throw new Error("Invalid verification code");
 
-      const session = await getSession();
-      if (!session?.user.email) throw new Error("Invalid verification code");
-      await queryClient.resetQueries({ queryKey: ["currentUser", session.user.email] });
+      // const session = await getSession();
+      // if (!session?.user.email) throw new Error("Invalid verification code");
+      // await queryClient.resetQueries({ queryKey: ["currentUser", session.user.email] });
 
       const redirectUrl =
         typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("redirect_url") : null;
