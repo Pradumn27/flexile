@@ -1,7 +1,7 @@
 class CreateAuthTables < ActiveRecord::Migration[8.0]
   def change
     create_table :session do |t|
-      t.text :id, primary_key: true
+      t.bigint :id, primary_key: true
       t.timestamp :expires_at, null: false
       t.text :token, null: false
       t.timestamp :created_at, null: false
@@ -15,7 +15,7 @@ class CreateAuthTables < ActiveRecord::Migration[8.0]
     end
 
     create_table :account do |t|
-      t.text :id, primary_key: true
+      t.bigint :id, primary_key: true
       t.text :account_id, null: false
       t.text :provider_id, null: false
       t.bigint :user_id, null: false
@@ -33,7 +33,7 @@ class CreateAuthTables < ActiveRecord::Migration[8.0]
     end
 
     create_table :verification do |t|
-      t.text :id, primary_key: true
+      t.bigint :id, primary_key: true
       t.text :identifier, null: false
       t.text :value, null: false
       t.timestamp :expires_at, null: false

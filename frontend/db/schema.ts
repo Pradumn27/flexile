@@ -2351,7 +2351,7 @@ export const companyUpdatesRelations = relations(companyUpdates, ({ one }) => ({
 }));
 
 export const session = pgTable("session", {
-  id: text("id").primaryKey(),
+  id: bigserial({ mode: "bigint" }).primaryKey().notNull(),
   expiresAt: timestamp("expires_at").notNull(),
   token: text("token").notNull().unique(),
   createdAt: timestamp("created_at").notNull(),
@@ -2364,7 +2364,7 @@ export const session = pgTable("session", {
 });
 
 export const account = pgTable("account", {
-  id: text("id").primaryKey(),
+  id: bigserial({ mode: "bigint" }).primaryKey().notNull(),
   accountId: text("account_id").notNull(),
   providerId: text("provider_id").notNull(),
   userId: text("user_id")
@@ -2382,7 +2382,7 @@ export const account = pgTable("account", {
 });
 
 export const verification = pgTable("verification", {
-  id: text("id").primaryKey(),
+  id: bigserial({ mode: "bigint" }).primaryKey().notNull(),
   identifier: text("identifier").notNull(),
   value: text("value").notNull(),
   expiresAt: timestamp("expires_at").notNull(),

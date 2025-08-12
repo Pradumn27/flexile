@@ -10,7 +10,7 @@
 #
 # It's strongly recommended that you check this file into your version control system.
 
-ActiveRecord::Schema[8.0].define(version: 2025_08_09_120029) do
+ActiveRecord::Schema[8.0].define(version: 2025_08_12_115750) do
   # These are extensions that must be enabled in order to support this database
   enable_extension "pg_catalog.plpgsql"
 
@@ -21,6 +21,21 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_120029) do
   create_enum "equity_grants_vesting_trigger", ["scheduled", "invoice_paid"]
   create_enum "integration_status", ["initialized", "active", "out_of_sync", "deleted"]
   create_enum "invoices_invoice_type", ["services", "other"]
+
+  create_table "account", id: :bigint, default: nil, force: :cascade do |t|
+    t.text "account_id", null: false
+    t.text "provider_id", null: false
+    t.bigint "user_id", null: false
+    t.text "access_token"
+    t.text "refresh_token"
+    t.text "id_token"
+    t.datetime "access_token_expires_at", precision: nil
+    t.datetime "refresh_token_expires_at", precision: nil
+    t.text "scope"
+    t.text "password"
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+  end
 
   create_table "active_storage_attachments", force: :cascade do |t|
     t.string "name", null: false
@@ -785,6 +800,18 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_120029) do
     t.index ["wise_recipient_id"], name: "index_payments_on_wise_recipient_id"
   end
 
+  create_table "session", id: :bigint, default: nil, force: :cascade do |t|
+    t.datetime "expires_at", precision: nil, null: false
+    t.text "token", null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
+    t.text "ip_address"
+    t.text "user_agent"
+    t.bigint "user_id", null: false
+
+    t.unique_constraint ["token"], name: "session_token_key"
+  end
+
   create_table "share_classes", force: :cascade do |t|
     t.bigint "company_id", null: false
     t.string "name", null: false
@@ -921,7 +948,6 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_120029) do
     t.boolean "team_member", default: false, null: false
     t.boolean "sent_invalid_tax_id_email", default: false, null: false
     t.string "clerk_id"
-    t.bigint "signup_invite_link_id"
     t.string "otp_secret_key"
     t.integer "otp_failed_attempts_count", default: 0, null: false
     t.datetime "otp_first_failed_at"
@@ -938,6 +964,14 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_120029) do
     t.index ["invited_by_type", "invited_by_id"], name: "index_users_on_invited_by"
     t.index ["reset_password_token"], name: "index_users_on_reset_password_token", unique: true
     t.index ["signup_invite_link_id"], name: "index_users_on_signup_invite_link_id"
+  end
+
+  create_table "verification", id: :bigint, default: nil, force: :cascade do |t|
+    t.text "identifier", null: false
+    t.text "value", null: false
+    t.datetime "expires_at", precision: nil, null: false
+    t.datetime "created_at", precision: nil, null: false
+    t.datetime "updated_at", precision: nil, null: false
   end
 
   create_table "versions", force: :cascade do |t|
@@ -1007,6 +1041,8 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_09_120029) do
     t.index ["wise_credential_id"], name: "index_wise_recipients_on_wise_credential_id"
   end
 
+  add_foreign_key "account", "users", name: "fk_account_user", on_delete: :cascade
   add_foreign_key "active_storage_attachments", "active_storage_blobs", column: "blob_id"
   add_foreign_key "active_storage_variant_records", "active_storage_blobs", column: "blob_id"
+  add_foreign_key "session", "users", name: "fk_session_user", on_delete: :cascade
 end
