@@ -1,6 +1,6 @@
 import { notFound } from "next/navigation";
 import env from "@/env";
-import { auth } from "@/lib/betterAuth";
+import { auth } from "@/lib/auth";
 
 async function handler(req: Request) {
   const routes = ["^/internal/", "^/api/", "^/admin/", "^/admin$", "^/webhooks/", "^/v1/", "^/rails/", "^/assets/"];

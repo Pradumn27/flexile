@@ -12,14 +12,12 @@ import {
 } from "@trpc/server";
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { eq } from "drizzle-orm";
-import { getServerSession } from "next-auth";
 import { cache } from "react";
 import superjson from "superjson";
 import { z } from "zod";
 import { db } from "@/db";
 import { companies, users } from "@/db/schema";
 import env from "@/env";
-import { authOptions } from "@/lib/auth";
 import { assertDefined } from "@/utils/assert";
 import { richTextExtensions } from "@/utils/richText";
 import { latestUserComplianceInfo, withRoles } from "./routes/users/helpers";
@@ -43,21 +41,8 @@ export const createContext = cache(({ req }: FetchCreateContextFnOptions) => {
 
   const userId: number | null = null;
 
-  // Get userId from NextAuth JWT session
-  // const session = await getServerSession(authOptions);
-  // if (session?.user) {
-  //   // Extract user ID from JWT token
-  //   try {
-  //     const jwt = session.user.jwt;
-  //     const base64Payload = jwt.split(".")[1];
-  //     if (base64Payload) {
-  //       const payload = z
-  //         .object({ user_id: z.number() })
-  //         .safeParse(JSON.parse(Buffer.from(base64Payload, "base64").toString()));
-  //       if (payload.success) userId = payload.data.user_id;
-  //     }
-  //   } catch {}
-  // }
+  // TODO: Integrate with Better Auth session management
+  // For now, we'll need to implement session checking with Better Auth
 
   return {
     userId,

@@ -18,7 +18,12 @@ export default function LoginPage() {
             Sign up
           </Link>
           <div className="mt-4" />
-          <Button variant="outline" onClick={signInWithGoogle}>
+          <Button
+            variant="outline"
+            onClick={() => {
+              void signInWithGoogle();
+            }}
+          >
             Continue with Google
           </Button>
         </>
