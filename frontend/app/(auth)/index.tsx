@@ -3,7 +3,6 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import Image from "next/image";
 import { useRouter, useSearchParams } from "next/navigation";
-// import { getSession, signIn } from "next-auth/react";
 import { useForm } from "react-hook-form";
 import { z } from "zod";
 import { MutationStatusButton } from "@/components/MutationButton";
@@ -12,10 +11,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { InputOTP, InputOTPGroup, InputOTPSlot } from "@/components/ui/input-otp";
+import { authClient } from "@/lib/auth-client";
 import logo from "@/public/logo-icon.svg";
 import { request } from "@/utils/request";
 
-const emailSchema = z.object({ email: z.string().email() });
+const emailSchema = z.object({ email: z.email() });
 const otpSchema = z.object({ otp: z.string().length(6) });
 
 export function AuthPage({
@@ -25,6 +25,7 @@ export function AuthPage({
   sendOtpUrl,
   sendOtpText,
   onVerifyOtp,
+  isSignUp = false,
 }: {
   title: string;
   description: string;
@@ -32,6 +33,7 @@ export function AuthPage({
   sendOtpUrl: string;
   sendOtpText: string;
   onVerifyOtp?: (data: { email: string; otp: string }) => Promise<void>;
+  isSignUp?: boolean;
 }) {
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -57,16 +59,18 @@ export function AuthPage({
 
   const verifyOtp = useMutation({
     mutationFn: async (values: { otp: string }) => {
-      const email = emailForm.getValues("email");
+      const email = String(emailForm.getValues("email"));
       await onVerifyOtp?.({ email, otp: values.otp });
 
-      // const result = await signIn("otp", { email, otp: values.otp, redirect: false });
+      if (isSignUp) {
+        await authClient.signUp.email({ email, password: "none", name: email });
+      } else {
+        await authClient.signIn.email({ email, password: "none" });
+      }
+      const { data: session } = await authClient.getSession();
 
-      // if (result?.error) throw new Error("Invalid verification code");
-
-      // const session = await getSession();
-      // if (!session?.user.email) throw new Error("Invalid verification code");
-      // await queryClient.resetQueries({ queryKey: ["currentUser", session.user.email] });
+      if (!session?.user.email) throw new Error("Invalid verification code");
+      await queryClient.resetQueries({ queryKey: ["currentUser", session.user.email] });
 
       const redirectUrl =
         typeof window !== "undefined" ? new URLSearchParams(window.location.search).get("redirect_url") : null;

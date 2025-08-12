@@ -6,7 +6,7 @@ import { createTRPCReact } from "@trpc/react-query";
 import { useEffect, useState } from "react";
 import superjson from "superjson";
 import { useUserStore } from "@/global";
-import { authClient } from "@/lib/auth-client";
+import { authClient, signOut } from "@/lib/auth-client";
 import { request } from "@/utils/request";
 import { internal_current_user_data_path } from "@/utils/routes";
 import { type AppRouter } from "./server";
@@ -39,8 +39,8 @@ export const UserDataProvider = ({ children }: { children: React.ReactNode }) =>
   useEffect(() => {
     if (isSignedIn && data) {
       login(data);
-    } else if (!isSignedIn) {
-      logout();
+    } else if (!isSignedIn && !isPending) {
+      void signOut().then(logout);
     }
     // Don't call logout() while loading (when isSignedIn=true but data=undefined)
   }, [isSignedIn, data, login, logout]);
