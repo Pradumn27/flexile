@@ -12,18 +12,20 @@ import {
 } from "@trpc/server";
 import type { FetchCreateContextFnOptions } from "@trpc/server/adapters/fetch";
 import { eq } from "drizzle-orm";
+import { headers as nextHeaders } from "next/headers";
 import { cache } from "react";
 import superjson from "superjson";
 import { z } from "zod";
 import { db } from "@/db";
 import { companies, users } from "@/db/schema";
 import env from "@/env";
+import { auth } from "@/lib/auth";
 import { assertDefined } from "@/utils/assert";
 import { richTextExtensions } from "@/utils/richText";
 import { latestUserComplianceInfo, withRoles } from "./routes/users/helpers";
 import { type AppRouter } from "./server";
 
-export const createContext = cache(({ req }: FetchCreateContextFnOptions) => {
+export const createContext = cache(async ({ req }: FetchCreateContextFnOptions) => {
   const host = assertDefined(req.headers.get("Host"));
   const cookie = req.headers.get("cookie") ?? "";
   const userAgent = req.headers.get("user-agent") ?? "";
@@ -39,10 +41,15 @@ export const createContext = cache(({ req }: FetchCreateContextFnOptions) => {
     ...(csrfToken ? { "x-csrf-token": csrfToken } : {}),
   };
 
-  const userId: number | null = null;
+  let userId: number | null = null;
 
-  // TODO: Integrate with Better Auth session management
-  // For now, we'll need to implement session checking with Better Auth
+  const session = await auth.api.getSession({
+    headers: await nextHeaders(), // you need to pass the headers object.
+  });
+
+  if (session?.user) {
+    userId = parseInt(session.user.id, 10);
+  }
 
   return {
     userId,

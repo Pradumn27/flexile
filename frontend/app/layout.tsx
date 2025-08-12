@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
 import { NuqsAdapter } from "nuqs/adapters/next/app";
-import { TRPCProvider } from "@/trpc/client";
+import { TRPCProvider, UserDataProvider } from "@/trpc/client";
 
 const abcWhyte = localFont({
   src: [
@@ -40,7 +40,9 @@ export default function RootLayout({ children }: Readonly<{ children: React.Reac
     <html lang="en">
       <body className={`${abcWhyte.className} h-screen antialiased accent-blue-600`}>
         <TRPCProvider>
-          <NuqsAdapter>{children}</NuqsAdapter>
+          <UserDataProvider>
+            <NuqsAdapter>{children}</NuqsAdapter>
+          </UserDataProvider>
         </TRPCProvider>
       </body>
     </html>

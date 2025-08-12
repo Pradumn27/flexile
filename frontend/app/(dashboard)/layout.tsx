@@ -54,6 +54,7 @@ import {
 } from "@/components/ui/sidebar";
 import { useCurrentCompany, useCurrentUser, useUserStore } from "@/global";
 import defaultCompanyLogo from "@/images/default-company-logo.svg";
+import { signOut } from "@/lib/auth-client";
 import { storageKeys } from "@/models/constants";
 import { trpc } from "@/trpc/client";
 import { request } from "@/utils/request";
@@ -228,10 +229,7 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
                 Support center
               </NavItem>
               <SidebarMenuItem>
-                <SidebarMenuButton
-                  // onClick={() => void signOut({ redirect: false }).then(logout)}
-                  className="cursor-pointer"
-                >
+                <SidebarMenuButton onClick={() => void signOut().then(logout)} className="cursor-pointer">
                   <LogOut className="size-6" />
                   <span>Log out</span>
                 </SidebarMenuButton>
