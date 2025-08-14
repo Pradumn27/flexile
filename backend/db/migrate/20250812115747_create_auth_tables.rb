@@ -9,6 +9,7 @@ class CreateAuthTables < ActiveRecord::Migration[8.0]
       t.text :ip_address
       t.text :user_agent
       t.bigint :user_id, null: false
+      t.text :jwt
 
       t.index [:token], unique: true
       t.foreign_key :users, column: :user_id, on_delete: :cascade

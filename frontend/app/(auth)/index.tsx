@@ -61,12 +61,10 @@ export function AuthPage({
     mutationFn: async (values: { otp: string }) => {
       const email = String(emailForm.getValues("email"));
       await onVerifyOtp?.({ email, otp: values.otp });
+      const result = await authClient.signIn.credentials({ email, otp: values.otp });
 
-      if (isSignUp) {
-        await authClient.signUp.email({ email, password: "none", name: email });
-      } else {
-        await authClient.signIn.email({ email, password: "none" });
-      }
+      if (!result.ok) throw new Error("Invalid verification code");
+
       const { data: session } = await authClient.getSession();
 
       if (!session?.user.email) throw new Error("Invalid verification code");

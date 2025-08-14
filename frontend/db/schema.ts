@@ -2361,6 +2361,7 @@ export const session = pgTable("session", {
   userId: text("user_id")
     .notNull()
     .references(() => users.id, { onDelete: "cascade" }),
+  jwt: text("jwt"),
 });
 
 export const account = pgTable("account", {

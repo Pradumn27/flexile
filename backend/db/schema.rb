@@ -808,6 +808,7 @@ ActiveRecord::Schema[8.0].define(version: 2025_08_12_115750) do
     t.text "ip_address"
     t.text "user_agent"
     t.bigint "user_id", null: false
+    t.text "jwt"
 
     t.unique_constraint ["token"], name: "session_token_key"
   end

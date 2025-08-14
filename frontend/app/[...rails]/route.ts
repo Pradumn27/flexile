@@ -20,20 +20,14 @@ async function handler(req: Request) {
       url.protocol = "http";
   }
 
-  // Check for Better Auth session
-  let session;
-  try {
-    session = await auth.api.getSession({ headers: req.headers });
-  } catch {
-    // No session found, continue without auth header
-  }
-
   const headers = new Headers(req.headers);
 
-  // If we have a session, add the user ID to the auth header
-  // The Rails backend will need to handle this differently since we don't have JWT tokens
-  if (session?.user.id) {
-    headers.set("x-flexile-user-id", session.user.id);
+  const sessionData = await auth.api.getSession({
+    headers,
+  });
+
+  if (sessionData?.session.jwt) {
+    headers.set("x-flexile-auth", `Bearer ${sessionData.session.jwt}`);
   }
 
   if (url.pathname.startsWith("/api/") || url.pathname.startsWith("/v1/")) {

@@ -44,7 +44,7 @@ export const createContext = cache(async ({ req }: FetchCreateContextFnOptions) 
   let userId: number | null = null;
 
   const session = await auth.api.getSession({
-    headers: await nextHeaders(), // you need to pass the headers object.
+    headers: await nextHeaders(),
   });
 
   if (session?.user) {
